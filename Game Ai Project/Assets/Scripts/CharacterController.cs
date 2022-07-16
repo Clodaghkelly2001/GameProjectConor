@@ -17,12 +17,20 @@ public class CharacterController : MonoBehaviour
 
     private float dirX = 0f;
     [SerializeField] private float speed = 7f;
-    private float Jumpforce = 8f;
+    private float Jumpforce = 17f;
 
     private enum movement { idle, right, jump };
     public int LivesLeft = 5;
 
     [SerializeField] private AudioSource coinsSoundEffect;
+
+    public GameObject Block;
+    public GameObject Flag;
+
+    //lives as time goes up
+    public int healthDecrease = 1;
+    float currentTime;
+    float increaseAmountTime = 1.0f;
 
 
     void Start()
@@ -32,6 +40,8 @@ public class CharacterController : MonoBehaviour
         animator = GetComponent<Animator>();
         sp = GetComponent<SpriteRenderer>();
         collider = GetComponent<BoxCollider2D>();
+        Block.SetActive(false);
+        Flag.SetActive(false);
     }
 
     // Update is called once per frame
@@ -81,6 +91,136 @@ public class CharacterController : MonoBehaviour
         }
 
         animator.SetInteger("state", (int)state);
+    }
+
+    public void OnGUI()
+    {
+        GUI.Box(new Rect(10, 10, 100, 50), "Points: " + points + " \nLives: " + LivesLeft);
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Coin"))
+        {
+            coinsSoundEffect.Play();
+            points += 10;
+            Destroy(other.gameObject);
+        }
+
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            LivesLeft--;
+            if (LivesLeft > 0)
+            {
+                points -= 5;
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+                SceneManager.LoadScene("GameOver");
+                points = 0;
+            }
+        }
+        if (other.gameObject.CompareTag("Melon"))
+        {
+           
+            if (LivesLeft < 5)
+            {
+                points += 5;
+                LivesLeft += 1;
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                Destroy(other.gameObject);
+                points += 5;
+            }
+        }
+       
+        if (other.gameObject.CompareTag("Spike"))
+        {
+            LivesLeft--;
+            if (LivesLeft > 0)
+            {
+                points -= 5;
+            }
+            else
+            {
+                Destroy(gameObject);
+                SceneManager.LoadScene("GameOver");
+                points = 0;
+            }
+        }
+
+        if (other.gameObject.CompareTag("Saw"))
+        {
+            LivesLeft--;
+            if (LivesLeft > 0)
+            {
+                points -= 5;
+            }
+            else
+            {
+                Destroy(gameObject);
+                SceneManager.LoadScene("GameOver");
+                points = 0;
+            }
+        }
+         
+        if (other.gameObject.CompareTag("Lava"))
+        {
+            LivesLeft--;
+
+            if (LivesLeft > 0)
+            {
+                points -= 5;
+            }
+            else
+            {
+                Destroy(gameObject);
+                SceneManager.LoadScene("GameOver");
+                points = 0;
+            }
+        }
+        
+        if (other.gameObject.CompareTag("Floor"))
+        {
+            Destroy(other.gameObject,1);
+        }
+
+        if (other.gameObject.CompareTag("SpikeDeath"))
+        {
+            Destroy(gameObject);
+            SceneManager.LoadScene("GameOver");
+        }
+
+        if (other.gameObject.CompareTag("SwingingSpike"))
+        {
+                points -= 5;
+        }
+
+        if (other.gameObject.CompareTag("Block"))
+        {
+            Block.SetActive(true);
+        }
+
+        if (other.gameObject.CompareTag("Rockman"))
+        {
+            Destroy(gameObject);
+            SceneManager.LoadScene("GameOver");
+        }
+
+        if (other.gameObject.CompareTag("FlagBlock"))
+        {
+            Flag.SetActive(true);
+        }
+
+        if (other.gameObject.CompareTag("CheckPoint"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+
     }
 }
 

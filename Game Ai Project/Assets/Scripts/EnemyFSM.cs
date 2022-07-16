@@ -12,6 +12,7 @@ public class EnemyFSM : MonoBehaviour
     public GameObject[] pattern;
     private int patternIndex = 0;
 
+    //flip direction
     private SpriteRenderer sp;
     private Rigidbody2D enemy;
     private float dirX = 0f;
@@ -39,7 +40,6 @@ public class EnemyFSM : MonoBehaviour
     {
 
         dirX = Input.GetAxisRaw("Horizontal");
-
         enemy.velocity = new Vector2(dirX * speed, enemy.velocity.y);
 
         switch (currentState)
@@ -68,19 +68,20 @@ public class EnemyFSM : MonoBehaviour
         if (distance <= speedDelta)
         {
             patternIndex++;
+            sp.flipX = true;
 
             if (patternIndex >= pattern.Length)
             {
                 patternIndex = 0;
-                
+                sp.flipX = false;
+
             }
 
             waypoint = pattern[patternIndex];
 
             rangeToClose = waypoint.transform.position - transform.position;
 
-                sp.flipX = true;
-           
+
         }
 
         Vector3 normalizedRangeToClose = rangeToClose.normalized;
@@ -88,7 +89,7 @@ public class EnemyFSM : MonoBehaviour
         Debug.DrawRay(transform.position, normalizedRangeToClose, Color.magenta);
 
         Vector3 delta = speedDelta * normalizedRangeToClose;
-         
+
         transform.Translate(delta);
 
     }
@@ -138,7 +139,7 @@ public class EnemyFSM : MonoBehaviour
     {
         Vector3 range = target.transform.position - transform.position;
         Debug.DrawRay(transform.position, range, Color.cyan);
-        if (range.magnitude >= patternRange)
+        if (range.magnitude > patternRange)
         {
             currentState = EnemyStates.PATROL;
 

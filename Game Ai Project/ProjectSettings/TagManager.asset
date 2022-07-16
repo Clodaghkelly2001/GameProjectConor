@@ -5,6 +5,19 @@ TagManager:
   serializedVersion: 2
   tags:
   - Spike
+  - Enemy
+  - Saw
+  - Lava
+  - Floor
+  - Water
+  - Coin
+  - SpikeDeath
+  - Block
+  - Rockman
+  - CheckPoint
+  - Melon
+  - SwingingSpike
+  - FlagBlock
   layers:
   - Default
   - TransparentFX
